@@ -15,7 +15,6 @@ const add = async (req, res) => {
             });
         })
     } catch (err) {
-        console.log(err.message);
         res.status(400).send(err.message);
     }
 }
@@ -40,7 +39,7 @@ const getAll = (req, res) => db
                     doc.data().torrentLink,
                     doc.data().status
                 )
-                films.push(film)
+                films.push(film);
             })
 
             res.status(200).send({films, status: 'ok'});
