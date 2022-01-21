@@ -5,15 +5,38 @@ import Film from "../models/Film.js"
 const add = async (req, res) => {
     try {
         const data = req.body;
+        const filmRef = db.collection('films').doc().set(data);
 
-        const filmRef = db.collection('films').doc();
+        await filmRef.set(data);
 
-        filmRef.set(data).then(() => {
-            res.send({
+        res.status(201).send({
+            data: {
                 ...data,
                 id: filmRef.id
-            });
-        })
+            },
+            status: "added"
+        });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+}
+
+const getOne = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const film = await db.collection('films').doc(id).get();
+
+        if (!film.exists) {
+            res.status(204).send({
+                message: "student not found",
+                status: "not found"
+            })
+        } else {
+            res.status(200).send({
+                data: film.data(),
+                status: "ok"
+            })
+        }
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -23,7 +46,7 @@ const getAll = (req, res) => {
     return db.collection('films').get()
         .then((snapshot) => {
             if (snapshot.empty) {
-                res.status(404).send({message: "films not found", status: 'not found'});
+                res.status(204).send({message: "films not found", status: 'not found'});
             } else {
                 const films = [];
 
@@ -49,22 +72,38 @@ const getAll = (req, res) => {
         })
 }
 
-const getOne = async (req, res) => {
+const update = async (req, res) => {
     try {
         const id = req.params.id;
-        const film = await db.collection('films').doc(id).get();
 
-        if(!film.exists){
-            res.status(404).send({
-                message: "student not found",
-                status: "not found"
-            })
-        } else {
-            res.send({
-                data: film.data(),
-                status: "ok"
-            })
-        }
+        await db.collection('films').doc(id).update(req.body);
+
+        res.status(200).send({
+            data: {
+                id
+            },
+            status: "updated"
+        });
+
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+
+}
+
+const remove = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        await db.collection('films').doc(id).delete();
+
+        res.status(200).send({
+            data: {
+                id
+            },
+            status: "deleted"
+        });
+
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -72,6 +111,8 @@ const getOne = async (req, res) => {
 
 export default {
     add,
+    getOne,
     getAll,
-    getOne
+    update,
+    remove
 }
