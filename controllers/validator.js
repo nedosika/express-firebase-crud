@@ -1,18 +1,32 @@
-const validate = async (req, res) => {
-    try {
-        const data = req.body;
+const validate = (value) =>
+  /^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/.test(value);
 
-        res.status(201).send({
-            data: {
+const ip = (req, res) => {
+  const data = req.body;
 
-            },
-            status: "validate"
+  Object.assign(
+    {},
+    ...Object.entries(data).map(([name, values]) => {
+      const errors = Object.entries(values)
+        .map(([key, value]) => validate(value))
+        .filter((element) => !element);
+
+      console.log(errors);
+
+      if (errors.length) {
+        res.status(405).send({
+          errors: { [name]: "IP addres validate error" },
+          status: "Validate error"
         });
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-}
+      } else {
+        res.status(200).send({
+          status: "Validate ok"
+        });
+      }
+    })
+  );
+};
 
 export default {
-    validate
-}
+  ip
+};

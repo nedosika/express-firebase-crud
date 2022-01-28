@@ -1,11 +1,11 @@
 import express from "express";
 
-import validator from "../controllers/validator.js";
+import validatorController from "../controllers/validator.js";
 
 const router = express.Router();
 
-router.get('/validator', validator.validate);
+router.post("/validators/ip/", validatorController.ip);
 
 export default {
-    routes: router
-}
+  routes: router
+};

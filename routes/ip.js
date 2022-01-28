@@ -4,12 +4,9 @@ import ipController from "../controllers/ip.js";
 
 const router = express.Router();
 
-router.post('/ip', ipController.add);
-router.get('/ip', ipController.getAll);
-// router.get('/films/:id', ipController.getOne);
-// router.put('/films/:id', ipController.update);
-// router.delete('/films/:id', ipController.remove);
+router.post("/ip", ipController.add);
+router.get("/ip", ipController.getAll);
 
 export default {
-    routes: router
-}
+  routes: router
+};
