@@ -1,149 +1,148 @@
-import db, { COLLECTIONS } from "../services/Firestore/index.js";
+import _ from "lodash";
+import firestore, {COLLECTIONS} from "../services/Firestore/index.js";
 
 import Film from "../models/Film.js";
 
 const add = async (req, res) => {
-  try {
-    const data = req.body;
-    const filmRef = db.collection(COLLECTIONS.films).doc();
+    try {
+        const data = req.body;
 
-    await filmRef.set(data);
+        await firestore.add(COLLECTIONS.films, data);
 
-    res.status(201).send({
-      data: new Film(
-        filmRef.id,
-        data.name,
-        data.year,
-        data.rating,
-        data.genre,
-        data.link,
-        data.torrentLink,
-        data.status
-      ),
-      status: "added"
-    });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+        res.status(201).send({
+            data: {
+                message: "Film added"
+            },
+            status: "added"
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 };
 
 const getOne = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const filmRef = await db.collection(COLLECTIONS.films).doc(id);
-    const doc = await filmRef.get();
+    try {
+        const id = req.params.id;
 
-    if (!doc.exists) {
-      res.status(404).send({
-        message: "film not found",
-        status: "not found"
-      });
-    } else {
-      res.status(200).send({
-        data: new Film(
-          id,
-          doc.data().name,
-          doc.data().year,
-          doc.data().rating,
-          doc.data().genre,
-          doc.data().link,
-          doc.data().torrentLink,
-          doc.data().status
-        ),
-        status: "ok"
-      });
+        const film = await firestore.getDocOne(COLLECTIONS.films, id);
+
+        if (_.isEmpty(film)) {
+            res.status(404).send({
+                message: "Film not found",
+                status: "not found"
+            });
+        } else {
+            res.status(200).send({
+                data: new Film(
+                    film.id,
+                    film.name,
+                    film.year,
+                    film.rating,
+                    film.genre,
+                    film.link,
+                    film.torrentLink,
+                    film.status
+                ),
+                status: "ok"
+            });
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
     }
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
 };
 
-const getAll = (req, res) => {
-  return db
-    .collection(COLLECTIONS.films)
-    .get()
-    .then((snapshot) => {
-      if (snapshot.empty) {
-        res.status(404).send({
-          data: {
-            message: "films not found "
-          },
-          status: "not found"
-        });
-      } else {
-        const films = [];
+const getAll = async (req, res) => {
+    const films = await firestore.getDocAll(COLLECTIONS.films);
 
-        snapshot.forEach((doc) => {
-          films.push(
-            new Film(
-              doc.id,
-              doc.data().name,
-              doc.data().year,
-              doc.data().rating,
-              doc.data().genre,
-              doc.data().link,
-              doc.data().torrentLink,
-              doc.data().status
-            )
-          );
+    if (films.length) {
+        const response = [];
+
+        films.forEach((film) => {
+            response.push(
+                new Film(
+                    film.id,
+                    film.name,
+                    film.year,
+                    film.rating,
+                    film.genre,
+                    film.link,
+                    film.torrentLink,
+                    film.status
+                )
+            );
         });
 
         res.status(200).send({
-          data: films,
-          status: "ok"
+            data: response,
+            status: "ok"
         });
-      }
-    })
-    .catch((err) => {
-      res.status(400).send(err.message);
-    });
+    } else {
+        res.status(404).send({
+            data: {
+                message: "films not found "
+            },
+            status: "not found"
+        });
+    }
 };
 
 const update = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const filmRef = await db.collection(COLLECTIONS.films).doc(id);
-    const film = await filmRef.get();
+    try {
+        const id = req.params.id;
+        const data = req.body;
 
-    if (!film.exists) {
-      res.status(404).send({
-        message: "film not found",
-        status: "not found"
-      });
-    } else {
-      await filmRef.update(req.body);
+        const oldFilm = await firestore.getDocOne(COLLECTIONS.films, id);
 
-      res.status(200).send({
-        data: film.data(),
-        status: "updated"
-      });
+        if (_.isEmpty(oldFilm)) {
+            res.status(404).send({
+                data: {
+                    message: "Film not found"
+                },
+                status: "not found"
+            });
+            await firestore.update(COLLECTIONS.films, {...oldFilm, ...data});
+
+            res.status(200).send({
+                data: {
+                    message: "Film updated"
+                },
+                status: "updated"
+            });
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
     }
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
 };
 
 const remove = async (req, res) => {
-  try {
-    const id = req.params.id;
+    try {
+        const id = req.params.id;
+        const removedFilm = await firestore.getDocOne(COLLECTIONS.films, id);
 
-    await db.collection(COLLECTIONS.films).doc(id).delete();
+        if (_.isEmpty(removedFilm)) {
+            res.status(404).send({
+                data: {
+                    message: "Film not found"
+                },
+                status: "not found"
+            });
+        } else {
+            await firestore.remove(COLLECTIONS.films, id)
 
-    res.status(200).send({
-      data: {
-        id
-      },
-      status: "deleted"
-    });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+            res.status(200).send({
+                data: removedFilm,
+                status: "deleted"
+            });
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 };
 
 export default {
-  add,
-  getOne,
-  getAll,
-  update,
-  remove
+    add,
+    getOne,
+    getAll,
+    update,
+    remove
 };

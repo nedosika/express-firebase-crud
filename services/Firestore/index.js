@@ -1,3 +1,3 @@
-export { default } from "./db";
+export { default } from "./firebase.js";
 
-export { COLLECTIONS } from "./consts";
+export { COLLECTIONS } from "./consts.js";

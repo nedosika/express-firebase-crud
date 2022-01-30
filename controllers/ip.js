@@ -1,57 +1,48 @@
-import db, { COLLECTIONS } from "../services/Firestore/index.js";
+import firestore, {COLLECTIONS} from "../services/Firestore/index.js";
 
 const add = async (req, res) => {
-  try {
-    const data = req.body;
-    const ref = db.collection(COLLECTIONS.ips).doc();
+    try {
+      const data = req.body;
 
-    await ref.set(data);
+      console.log(data)
 
-    res.status(201).send({
-      data: {
-        id: ref.id
-      },
-      status: "added"
-    });
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
+      await firestore.add(COLLECTIONS.ips, data)
+
+      res.status(201).send({
+        data: {
+          message: 'Document added'
+        },
+        status: "added"
+      });
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
 };
 
-const getAll = (req, res) => {
-  return db
-    .collection(COLLECTIONS.ips)
-    .get()
-    .then((snapshot) => {
-      if (snapshot.empty) {
-        res.status(404).send({
-          data: {
-            message: "ip not found "
-          },
-          status: "not found"
-        });
-      } else {
-        const ips = [];
+const getAll = async (req, res) => {
+    try {
+        const ips = await firestore.getDocAll(COLLECTIONS.ips);
 
-        snapshot.forEach((doc) => {
-          ips.push({
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-
-        res.status(200).send({
-          data: ips,
-          status: "ok"
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(400).send(err.message);
-    });
+        if (ips.length) {
+            res.status(200).send({
+                data: ips,
+                status: "ok"
+            })
+        } else {
+            res.status(404).send({
+                data: {
+                    message: "Ips not found "
+                },
+                status: "not found"
+            })
+        }
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send(error.message);
+    }
 };
 
 export default {
-  add,
-  getAll
+    add,
+    getAll
 };
