@@ -1,4 +1,5 @@
 export const COLLECTIONS = {
   ips: "ips",
-  films: "films"
+  films: "films",
+  users: "users"
 };

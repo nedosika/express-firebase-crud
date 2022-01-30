@@ -4,15 +4,13 @@ const add = async (req, res) => {
     try {
       const data = req.body;
 
-      console.log(data)
-
-      await firestore.add(COLLECTIONS.ips, data)
+      const ips = await firestore.add(COLLECTIONS.ips, data)
 
       res.status(201).send({
         data: {
-          message: 'Document added'
+          ips
         },
-        status: "added"
+        status: "ips added"
       });
     } catch (error) {
       res.status(400).send(error.message);

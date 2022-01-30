@@ -7,11 +7,11 @@ const add = async (req, res) => {
     try {
         const data = req.body;
 
-        await firestore.add(COLLECTIONS.films, data);
+        const film = await firestore.add(COLLECTIONS.films, data);
 
         res.status(201).send({
             data: {
-                message: "Film added"
+                film
             },
             status: "added"
         });

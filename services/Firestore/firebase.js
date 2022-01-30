@@ -6,8 +6,14 @@ admin.initializeApp({
 
 const firebase = admin.firestore();
 
-const add = (collection, data) =>
-    firebase.collection(collection).doc().set(data);
+const add = async (collection, data) => {
+    const ref = firebase.collection(collection).doc();
+    const id = ref.id;
+
+    await ref.set(data);
+
+    return {id, ...data}
+}
 
 const getDocOne = async (collection, id) => {
     const doc = await firebase.collection(collection).doc(id).get();
