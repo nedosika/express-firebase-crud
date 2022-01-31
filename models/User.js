@@ -12,7 +12,7 @@ class User {
     static async getOneByEmail(email) {
         const users = await firestore.getDocAll(COLLECTIONS.users);
 
-        return  users.find((user) => user.email === email.toLowerCase());
+        return users.find((user) => user.email === email.toLowerCase());
     }
 
     static async create({email, password}){

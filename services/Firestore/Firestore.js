@@ -4,10 +4,10 @@ admin.initializeApp({
     credential: admin.credential.cert("./serviceAccountKey.json")
 });
 
-const firebase = admin.firestore();
+const firestore = admin.firestore();
 
 const add = async (collection, data) => {
-    const ref = firebase.collection(collection).doc();
+    const ref = firestore.collection(collection).doc();
     const id = ref.id;
 
     await ref.set(data);
@@ -16,12 +16,12 @@ const add = async (collection, data) => {
 }
 
 const getDocOne = async (collection, id) => {
-    const doc = await firebase.collection(collection).doc(id).get();
+    const doc = await firestore.collection(collection).doc(id).get();
     return {id: doc.id, ...doc.data()};
 }
 
 const getDocAll = async (collection) => {
-    const snapshot = await firebase.collection(collection).get();
+    const snapshot = await firestore.collection(collection).get();
 
     const documents = [];
 
@@ -36,10 +36,10 @@ const getDocAll = async (collection) => {
 };
 
 const remove = (collection, id) =>
-    firebase.collection(collection).doc(id).delete();
+    firestore.collection(collection).doc(id).delete();
 
 const update = (collection, document) =>
-    firebase.collection(collection).doc(document.id).update(document);
+    firestore.collection(collection).doc(document.id).update(document);
 
 export default {
     add,
