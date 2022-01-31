@@ -5,25 +5,8 @@ import Film from "../models/Film.js";
 const add = async (req, res) => {
     try {
         const data = req.body;
-        const {
-            name,
-            year,
-            rating,
-            genre,
-            link,
-            torrentLink,
-            status
-        } = data;
 
-        const film = await Film.create({
-            name,
-            year,
-            rating,
-            genre,
-            link,
-            torrentLink,
-            status
-        });
+        const film = await Film.create(data);
 
         res.status(201).send({
             data: film,
@@ -53,7 +36,7 @@ const getOne = async (req, res) => {
             });
         } else {
             res.status(200).send({
-                data: film,
+                data: {id, ...film},
                 status: "ok"
             });
         }
@@ -97,7 +80,7 @@ const update = async (req, res) => {
         const id = req.params.id;
         const data = req.body;
 
-        const film = Film.update({id, ...data});
+        const film = await Film.update({id, ...data});
 
         if (_.isEmpty(film)) {
             res.status(404).send({

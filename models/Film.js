@@ -20,49 +20,29 @@ class Film {
     static create = (film) =>
         firestore.add(COLLECTIONS.films, film);
 
-    static getAll = async () => {
-        const snapshot = await firestore.getDocAll(COLLECTIONS.films);
-        const films = [];
-
-        snapshot.forEach((film) => {
-            film.push(
-                new Film(
-                    film.id,
-                    film.name,
-                    film.year,
-                    film.rating,
-                    film.genre,
-                    film.link,
-                    film.torrentLink,
-                    film.status
-                )
-            );
-        });
-
-        return films;
-    }
+    static getAll = () =>
+        firestore.getDocAll(COLLECTIONS.films);
 
     static update = async (updatedFilm) => {
         const oldFilm = await Film.getOne(updatedFilm.id);
 
-        if(_.isEmpty(oldFilm)){
-            return {}
-        }
+        if(_.isEmpty(oldFilm))
+            return;
 
         const newFilm = {...oldFilm, ...updatedFilm};
 
         await firestore.update(COLLECTIONS.films, newFilm);
 
         return newFilm;
-    }
+    };
 
     static remove = async (id) => {
-        const film = Film.getOne(id);
+        const film = await Film.getOne(id);
 
         if(_.isEmpty(film))
             return {};
 
-        await Film.update(film);
+        await firestore.remove(COLLECTIONS.films, id);
 
         return film;
     }

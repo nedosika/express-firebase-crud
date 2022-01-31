@@ -17,7 +17,7 @@ const add = async (collection, data) => {
 
 const getDocOne = async (collection, id) => {
     const doc = await firestore.collection(collection).doc(id).get();
-    return {id: doc.id, ...doc.data()};
+    return {...doc.data()};
 }
 
 const getDocAll = async (collection) => {
