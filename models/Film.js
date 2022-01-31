@@ -12,13 +12,14 @@ class Film {
         this.status = status;
     }
 
-    static async findOne(film) {
+    static getOne = ({id}) =>
+        firestore.getDocOne(COLLECTIONS.films, id)
 
-    }
+    static create = (film) =>
+        firestore.add(COLLECTIONS.films, film);
 
-    static async create(name, year, rating, genre, link, torrentLink, status){
-
-    }
+    static getAll = () =>
+        firestore.getDocAll(COLLECTIONS.films);
 }
 
 export default Film;

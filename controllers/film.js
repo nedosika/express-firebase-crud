@@ -6,8 +6,11 @@ import Film from "../models/Film.js";
 const add = async (req, res) => {
     try {
         const data = req.body;
+        const {name, year, rating, genre, link, torrentLink, status} = data;
 
-        const film = await firestore.add(COLLECTIONS.films, data);
+        const film = await Film.create(
+            new Film(name, year, rating, genre, link, torrentLink, status)
+        );
 
         res.status(201).send({
             data: {
@@ -24,7 +27,7 @@ const getOne = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const film = await firestore.getDocOne(COLLECTIONS.films, id);
+        const film = await Film.getOne({id});
 
         if (_.isEmpty(film)) {
             res.status(404).send({
@@ -32,17 +35,19 @@ const getOne = async (req, res) => {
                 status: "not found"
             });
         } else {
+            const film = new Film(
+                film.id,
+                film.name,
+                film.year,
+                film.rating,
+                film.genre,
+                film.link,
+                film.torrentLink,
+                film.status
+            );
+
             res.status(200).send({
-                data: new Film(
-                    film.id,
-                    film.name,
-                    film.year,
-                    film.rating,
-                    film.genre,
-                    film.link,
-                    film.torrentLink,
-                    film.status
-                ),
+                data: film,
                 status: "ok"
             });
         }
@@ -52,7 +57,7 @@ const getOne = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-    const films = await firestore.getDocAll(COLLECTIONS.films);
+    const films = await Film.getAll();
 
     if (films.length) {
         const response = [];
