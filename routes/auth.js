@@ -4,8 +4,8 @@ import authController from "../controllers/auth.js";
 
 const router = express.Router();
 
-router.post('/auth/signin', authController.signin);
-router.post('/auth/signup', authController.signup);
+router.post('/auth/signin', authController.signIn);
+router.post('/auth/signup', authController.signUp);
 
 export default {
     routes: router

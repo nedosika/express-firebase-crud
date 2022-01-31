@@ -1,25 +1,41 @@
 import _ from "lodash";
-import firestore, {COLLECTIONS} from "../services/Firestore/index.js";
 
 import Film from "../models/Film.js";
 
 const add = async (req, res) => {
     try {
         const data = req.body;
-        const {name, year, rating, genre, link, torrentLink, status} = data;
+        const {
+            name,
+            year,
+            rating,
+            genre,
+            link,
+            torrentLink,
+            status
+        } = data;
 
-        const film = await Film.create(
-            new Film(name, year, rating, genre, link, torrentLink, status)
-        );
+        const film = await Film.create({
+            name,
+            year,
+            rating,
+            genre,
+            link,
+            torrentLink,
+            status
+        });
 
         res.status(201).send({
-            data: {
-                film
-            },
-            status: "added"
+            data: film,
+            message: "Film added",
+            status: "Added"
         });
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send({
+            data: {},
+            message: error.message,
+            status: "Error"
+        });
     }
 };
 
@@ -27,66 +43,51 @@ const getOne = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const film = await Film.getOne({id});
+        const film = await Film.getOne(id);
 
         if (_.isEmpty(film)) {
             res.status(404).send({
+                data: {},
                 message: "Film not found",
                 status: "not found"
             });
         } else {
-            const film = new Film(
-                film.id,
-                film.name,
-                film.year,
-                film.rating,
-                film.genre,
-                film.link,
-                film.torrentLink,
-                film.status
-            );
-
             res.status(200).send({
                 data: film,
                 status: "ok"
             });
         }
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send({
+            data: {},
+            message: error.message,
+            status: "Error"
+        });
     }
 };
 
 const getAll = async (req, res) => {
-    const films = await Film.getAll();
+    try {
+        const films = await Film.getAll();
 
-    if (films.length) {
-        const response = [];
-
-        films.forEach((film) => {
-            response.push(
-                new Film(
-                    film.id,
-                    film.name,
-                    film.year,
-                    film.rating,
-                    film.genre,
-                    film.link,
-                    film.torrentLink,
-                    film.status
-                )
-            );
-        });
-
-        res.status(200).send({
-            data: response,
-            status: "ok"
-        });
-    } else {
-        res.status(404).send({
-            data: {
-                message: "films not found "
-            },
-            status: "not found"
+        if (films.length) {
+            res.status(200).send({
+                data: films,
+                message: "",
+                status: "ok"
+            });
+        } else {
+            res.status(404).send({
+                data: {},
+                message: "Films not found",
+                status: "Not found"
+            });
+        }
+    } catch (error) {
+        res.status(500).send({
+            data: {},
+            message: error.message,
+            status: "Error"
         });
     }
 };
@@ -96,51 +97,54 @@ const update = async (req, res) => {
         const id = req.params.id;
         const data = req.body;
 
-        const oldFilm = await firestore.getDocOne(COLLECTIONS.films, id);
+        const film = Film.update({id, ...data});
 
-        if (_.isEmpty(oldFilm)) {
+        if (_.isEmpty(film)) {
             res.status(404).send({
-                data: {
-                    message: "Film not found"
-                },
-                status: "not found"
+                data,
+                message: "Film not found",
+                status: "Not found"
             });
-            await firestore.update(COLLECTIONS.films, {...oldFilm, ...data});
-
+        } else {
             res.status(200).send({
-                data: {
-                    message: "Film updated"
-                },
-                status: "updated"
+                data: film,
+                message: "Film updated",
+                status: "Updated"
             });
         }
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send({
+            data: {},
+            message: error.message,
+            status: "Error"
+        });
     }
 };
 
 const remove = async (req, res) => {
     try {
         const id = req.params.id;
-        const removedFilm = await firestore.getDocOne(COLLECTIONS.films, id);
+        const film = await Film.remove(id);
 
-        if (_.isEmpty(removedFilm)) {
+        if (_.isEmpty(film)) {
             res.status(404).send({
-                data: {
-                    message: "Film not found"
-                },
-                status: "not found"
+                data: {id},
+                message: "Film not found",
+                status: "Not found"
             });
         } else {
-            await firestore.remove(COLLECTIONS.films, id)
-
             res.status(200).send({
-                data: removedFilm,
-                status: "deleted"
+                data: film,
+                message: "Film removed",
+                status: "Removed"
             });
         }
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send({
+            data: {},
+            message: error.message,
+            status: "Error"
+        });
     }
 };
 

@@ -9,7 +9,7 @@ class User {
         this.status = status;
     }
 
-    static async getOneByEmail(email) {
+    static async getOne(email) {
         const users = await firestore.getDocAll(COLLECTIONS.users);
 
         return users.find((user) => user.email === email.toLowerCase());

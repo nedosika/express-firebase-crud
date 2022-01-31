@@ -5,7 +5,7 @@ import User from "../models/User.js";
 
 import config from "../config.js";
 
-const signin = async (req, res) => {
+const signIn = async (req, res) => {
     try {
         const {email, password} = req.body;
 
@@ -13,7 +13,7 @@ const signin = async (req, res) => {
             res.status(400).send("All input is required");
         }
 
-        const user = await User.getOneByEmail(email);
+        const user = await User.getOne(email);
 
         if (user && (await bcrypt.compare(password, user.password))) {
             const token = jwt.sign(
@@ -34,7 +34,7 @@ const signin = async (req, res) => {
     }
 }
 
-const signup = async (req, res) => {
+const signUp = async (req, res) => {
     try {
         const {email, password} = req.body;
 
@@ -42,7 +42,7 @@ const signup = async (req, res) => {
             res.status(400).send("All input is required");
         }
 
-        const oldUser = await User.getOneByEmail(email);
+        const oldUser = await User.getOne(email);
 
         if (oldUser) {
             return res.status(409).send("User Already Exist. Please Login");
@@ -72,6 +72,6 @@ const signup = async (req, res) => {
 }
 
 export default {
-    signin,
-    signup
+    signIn,
+    signUp
 }
