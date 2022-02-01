@@ -10,7 +10,7 @@ const signIn = async (req, res) => {
     const { email, password } = req.body;
 
     if (!(email && password)) {
-      res.status(400).send({
+      return res.status(400).send({
         message: "All input is required",
         status: "Required"
       });
@@ -22,10 +22,9 @@ const signIn = async (req, res) => {
       const token = jwt.sign({ user_id: user.id, email }, config.jwtTokenKey, {
         expiresIn: "2h"
       });
-      console.log(user);
+
       return res.status(200).send({
         data: {
-          ...user,
           token
         },
         status: "OK"
@@ -63,20 +62,17 @@ const signUp = async (req, res) => {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const { id } = await User.create({
       email: email.toLowerCase(),
       password: encryptedPassword
     });
 
-    const token = jwt.sign({ user_id: user.id, email }, config.jwtTokenKey, {
+    const token = jwt.sign({ user_id: id, email }, config.jwtTokenKey, {
       expiresIn: "2h"
     });
 
-    user.token = token;
-
     res.status(201).send({
       data: {
-        ...user,
         token
       },
       status: "OK"
