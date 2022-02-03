@@ -1,5 +1,5 @@
 import express from "express";
-import auth from "../middleware/auth.js"
+import auth from "../middleware/auth.js";
 
 import rootController from "../controllers/root.js";
 
@@ -11,5 +11,5 @@ router.post("/welcome", auth, (req, res) => {
 });
 
 export default {
-  routes: router
+  router
 };

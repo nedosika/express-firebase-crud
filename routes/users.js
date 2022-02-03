@@ -8,5 +8,5 @@ const router = express.Router();
 router.put("/users/:id", auth, usersController.update);
 
 export default {
-  routes: router
+  router
 };

@@ -12,5 +12,5 @@ router.put("/films/:id", auth, filmController.update);
 router.delete("/films/:id", auth, filmController.remove);
 
 export default {
-  routes: router
+  router
 };

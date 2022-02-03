@@ -16,7 +16,7 @@ const signIn = async (req, res) => {
       });
     }
 
-    const user = await User.getOne(email);
+    const user = await User.getOneByEmail(email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign({ user_id: user.id, email }, config.jwtTokenKey, {
@@ -52,7 +52,7 @@ const signUp = async (req, res) => {
       });
     }
 
-    const oldUser = await User.getOne(email);
+    const oldUser = await User.getOneByEmail(email);
 
     if (oldUser) {
       return res.status(409).send({

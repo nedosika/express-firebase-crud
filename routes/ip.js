@@ -8,5 +8,5 @@ router.post("/ips", ipController.add);
 router.get("/ips", ipController.getAll);
 
 export default {
-  routes: router
+  router
 };
