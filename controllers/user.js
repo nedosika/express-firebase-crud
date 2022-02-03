@@ -31,6 +31,34 @@ const update = async (req, res) => {
   }
 };
 
+const getOne = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const user = await User.getOne(id);
+
+    if (_.isEmpty(user)) {
+      res.status(404).send({
+        data: {},
+        message: "User not found",
+        status: "not found"
+      });
+    } else {
+      res.status(200).send({
+        data: { id, ...user },
+        status: "ok"
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      data: {},
+      message: error.message,
+      status: "Error"
+    });
+  }
+};
+
 export default {
-  update
+  update,
+  getOne
 };

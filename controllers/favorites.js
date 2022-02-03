@@ -31,9 +31,8 @@ const add = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
-    const user = await User.addFilmToFavorites(id, data);
 
-    console.log(user);
+    const user = await User.addFilmToFavorites(id, data);
 
     res.status(201).send(user);
   } catch (error) {
