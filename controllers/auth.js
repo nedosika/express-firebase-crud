@@ -25,7 +25,8 @@ const signIn = async (req, res) => {
 
       return res.status(200).send({
         data: {
-          token
+          token,
+          user
         },
         status: "OK"
       });
@@ -62,18 +63,19 @@ const signUp = async (req, res) => {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const { id } = await User.create({
+    const user = await User.create({
       email: email.toLowerCase(),
       password: encryptedPassword
     });
 
-    const token = jwt.sign({ user_id: id, email }, config.jwtTokenKey, {
+    const token = jwt.sign({ user_id: user.id, email }, config.jwtTokenKey, {
       expiresIn: "2h"
     });
 
     res.status(201).send({
       data: {
-        token
+        token,
+        user
       },
       status: "OK"
     });

@@ -8,15 +8,17 @@ import filmRoutes from "./routes/film.js";
 import authRoutes from "./routes/auth.js";
 import validatorRoutes from "./routes/validator.js";
 import rootRoutes from "./routes/root.js";
+import userRoutes from "./routes/users.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use("/api", filmRoutes.routes);
-app.use("/api", authRoutes.routes)
+app.use("/api", authRoutes.routes);
 app.use("/api", ipRoutes.routes);
 app.use("/api", validatorRoutes.routes);
+app.use("/api", userRoutes.routes);
 app.use("/", rootRoutes.routes);
 
 const port = config.port || 6000;

@@ -1,50 +1,70 @@
 import admin from "firebase-admin";
 
 admin.initializeApp({
-    credential: admin.credential.cert("./serviceAccountKey.json")
+  credential: admin.credential.cert("./serviceAccountKey.json")
 });
 
 const firestore = admin.firestore();
 
 const add = async (collection, data) => {
-    const ref = firestore.collection(collection).doc();
-    const id = ref.id;
+  const ref = firestore.collection(collection).doc();
+  const id = ref.id;
 
-    await ref.set(data);
+  await ref.set(data);
 
-    return {id, ...data}
-}
+  return { id, ...data };
+};
 
 const getDocOne = async (collection, id) => {
-    const doc = await firestore.collection(collection).doc(id).get();
-    return {...doc.data()};
-}
+  const doc = await firestore.collection(collection).doc(id).get();
+  return { ...doc.data() };
+};
 
 const getDocAll = async (collection) => {
-    const snapshot = await firestore.collection(collection).get();
+  const snapshot = await firestore.collection(collection).get();
 
-    const documents = [];
+  const documents = [];
 
-    snapshot.forEach((doc) => {
-      documents.push({
-        id: doc.id,
-        ...doc.data()
-      })
-    })
+  snapshot.forEach((doc) => {
+    documents.push({
+      id: doc.id,
+      ...doc.data()
+    });
+  });
 
-    return documents
+  return documents;
+};
+
+const getDocsByQuery = async (collection, query) => {
+  const snapshot = await firestore
+    .collection(collection)
+    .where(query.field, query.rule, query.value)
+    .get();
+
+  if (snapshot.empty) {
+    return [];
+  }
+
+  const docs = [];
+
+  snapshot.forEach((doc) => {
+    docs.push({ id: doc.id, ...doc.data() });
+  });
+
+  return docs;
 };
 
 const remove = (collection, id) =>
-    firestore.collection(collection).doc(id).delete();
+  firestore.collection(collection).doc(id).delete();
 
 const update = (collection, document) =>
-    firestore.collection(collection).doc(document.id).update(document);
+  firestore.collection(collection).doc(document.id).update(document);
 
 export default {
-    add,
-    update,
-    remove,
-    getDocAll,
-    getDocOne
+  add,
+  update,
+  remove,
+  getDocAll,
+  getDocOne,
+  getDocsByQuery
 };
