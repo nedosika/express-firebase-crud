@@ -45,6 +45,10 @@ const add = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
+    const userId = req.params.id;
+    const data = req.body;
+
+    console.log(userId, data);
   } catch (error) {
     res.status(500).send({
       message: error.message,
