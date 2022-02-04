@@ -47,9 +47,13 @@ const remove = async (req, res) => {
     const userId = req.params.id;
     const { filmId } = req.body;
 
-    const favorites = await User.removeFilmFromFavorites(userId, filmId);
+    await User.removeFilmFromFavorites(userId, filmId);
 
-    res.status(200).send(favorites);
+    res.status(200).send({
+      data: filmId,
+      message: "Film deleted from favorites",
+      status: "Deleted"
+    });
     console.log(userId);
   } catch (error) {
     res.status(500).send({
