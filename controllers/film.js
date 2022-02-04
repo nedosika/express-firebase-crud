@@ -5,7 +5,7 @@ import Film from "../models/Film.js";
 const add = async (req, res) => {
   try {
     const data = req.body;
-
+    console.log(data);
     const film = await Film.create(data);
 
     res.status(201).send({

@@ -47,8 +47,14 @@ class User {
   static async addFilmToFavorites(userId, film) {
     const oldUser = await User.getOne(userId);
 
+    // const favorites = [
+    //   ...(oldUser.favorites ? [...oldUser.favorites] : []),
+    //   film
+    // ];
+
+    const oldFavorites = oldUser.favorites || [];
     const favorites = [
-      ...(oldUser.favorites ? [...oldUser.favorites] : []),
+      ...oldFavorites.filter(({ id }) => id !== film.id),
       film
     ];
 
