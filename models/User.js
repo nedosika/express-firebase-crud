@@ -2,9 +2,8 @@ import Firestore, { COLLECTIONS } from "../services/Firestore/index.js";
 import _ from "lodash";
 
 class User {
-  constructor(id, login, password, email, status, favorites) {
+  constructor(id, email, password, status, favorites = []) {
     this.id = id;
-    this.login = login;
     this.password = password;
     this.email = email;
     this.status = status;
@@ -47,14 +46,15 @@ class User {
 
   static async addFilmToFavorites(userId, film) {
     const oldUser = await User.getOne(userId);
-    const newUser = {
-      ...oldUser,
-      favorites: [...oldUser.favorites, film]
-    };
 
-    await Firestore.update(COLLECTIONS.users, newUser);
+    const favorites = [
+      ...(oldUser.favorites ? [...oldUser.favorites] : []),
+      film
+    ];
 
-    return newUser;
+    await Firestore.update(COLLECTIONS.users, { ...oldUser, favorites });
+
+    return favorites;
   }
 }
 

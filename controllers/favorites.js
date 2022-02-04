@@ -29,13 +29,13 @@ const get = async (req, res) => {
 
 const add = async (req, res) => {
   try {
-    const id = req.params.id;
+    const userId = req.params.id;
     const data = req.body;
-
-    const user = await User.addFilmToFavorites(id, data);
-
-    res.status(201).send(user);
+    const favorites = await User.addFilmToFavorites(userId, data);
+    console.log(favorites);
+    res.status(201).send(favorites);
   } catch (error) {
+    console.log(error.mesaage);
     res.status(500).send({
       message: error.message,
       status: "Error"
