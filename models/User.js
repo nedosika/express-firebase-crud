@@ -56,6 +56,16 @@ class User {
 
     return favorites;
   }
+
+  static async removeFilmFromFavorites(userId, filmId) {
+    const oldUser = await User.getOne(userId);
+
+    const favorites = oldUser.favorites.filter((film) => film.id !== filmId);
+
+    await Firestore.update(COLLECTIONS.users, { ...oldUser, favorites });
+
+    return favorites;
+  }
 }
 
 export default User;

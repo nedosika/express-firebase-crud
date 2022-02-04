@@ -9,7 +9,6 @@ const firestore = admin.firestore();
 const add = async (collection, data) => {
   const ref = firestore.collection(collection).doc();
   const id = ref.id;
-  console.log(data);
   await ref.set(data);
 
   return { id, ...data };

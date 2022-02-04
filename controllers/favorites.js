@@ -32,7 +32,6 @@ const add = async (req, res) => {
     const userId = req.params.id;
     const data = req.body;
     const favorites = await User.addFilmToFavorites(userId, data);
-    console.log(favorites);
     res.status(201).send(favorites);
   } catch (error) {
     console.log(error.mesaage);
@@ -46,9 +45,12 @@ const add = async (req, res) => {
 const remove = async (req, res) => {
   try {
     const userId = req.params.id;
-    const data = req.body;
+    const { filmId } = req.body;
 
-    console.log(userId, data);
+    const favorites = await User.removeFilmFromFavorites(userId, filmId);
+
+    res.status(200).send(favorites);
+    console.log(userId);
   } catch (error) {
     res.status(500).send({
       message: error.message,
