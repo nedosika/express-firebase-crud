@@ -75,6 +75,35 @@ const getAll = async (req, res) => {
   }
 };
 
+const getAllByQuery = async (req, res) => {
+  try {
+    const field = req.body.field;
+    const value = req.body.value;
+    const result = await Film.getAll();
+    const films = result.filter((film) => film[field].indexOf(value) > -1);
+
+    if (films.length) {
+      res.status(200).send({
+        data: films,
+        message: "test",
+        status: "ok"
+      });
+    } else {
+      res.status(404).send({
+        data: {},
+        message: "Films not found",
+        status: "Not found"
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      data: {},
+      message: error.message,
+      status: "Error"
+    });
+  }
+};
+
 const update = async (req, res) => {
   try {
     const id = req.params.id;
@@ -135,6 +164,7 @@ export default {
   add,
   getOne,
   getAll,
+  getAllByQuery,
   update,
   remove
 };

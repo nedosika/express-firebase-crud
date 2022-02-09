@@ -20,6 +20,13 @@ class Film {
 
   static getAll = () => firestore.getDocAll(COLLECTIONS.films);
 
+  static getAllByQuery = (query) =>
+    firestore.getDocsByQuery(COLLECTIONS.films, {
+      field: query.field,
+      rule: "==",
+      value: query.value
+    });
+
   static update = async (updatedFilm) => {
     const oldFilm = await Film.getOne(updatedFilm.id);
 

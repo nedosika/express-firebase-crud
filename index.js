@@ -10,6 +10,7 @@ import validator from "./routes/validator.js";
 import root from "./routes/root.js";
 import user from "./routes/users.js";
 import favorites from "./routes/favorites.js";
+import search from "./routes/search.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api", ip.router);
 app.use("/api", validator.router);
 app.use("/api", user.router);
 app.use("/api", favorites.router);
+app.use("/api", search.router);
 app.use("/", root.router);
 
 const port = config.port || 6000;
