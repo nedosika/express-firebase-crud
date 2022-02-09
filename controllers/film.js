@@ -78,9 +78,11 @@ const getAll = async (req, res) => {
 const getAllByQuery = async (req, res) => {
   try {
     const field = req.body.field;
-    const value = req.body.value;
-    const result = await Film.getAll();
-    const films = result.filter((film) => film[field].indexOf(value) > -1);
+    const value = req.body.value.toLowerCase();
+    //const films = await Film.getAllByQuery({ field, value });
+    const films = (await Film.getAll()).filter(
+      (film) => film[field].toLowerCase().indexOf(value) > -1
+    );
 
     if (films.length) {
       res.status(200).send({
