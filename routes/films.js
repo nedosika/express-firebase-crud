@@ -10,6 +10,8 @@ router.post("/films", auth, filmController.add);
 router.get("/films/:id", filmController.getOne);
 router.put("/films/:id", auth, filmController.update);
 router.delete("/films/:id", auth, filmController.remove);
+router.post("/films/search", filmController.search);
+router.post("/films/query", filmController.getByQuery);
 
 export default {
   router

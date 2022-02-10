@@ -81,7 +81,7 @@ const getByQuery = async (req, res) => {
 
     const films = await Film.getAll();
 
-    const filteredFilms = _.isEmpty(req.query)
+    const filteredFilms = _.isEmpty(req.body)
       ? films
       : films.filter(
           (film) => film[field].toLowerCase().indexOf(value.toLowerCase()) > -1
@@ -173,16 +173,14 @@ const search = async (req, res) => {
     const films = await Film.getAll();
     const searchedFilms = _.isEmpty(req.body)
       ? films
-      : films
-          .map((film) => film[field])
-          .filter(
-            (film) => film.toLowerCase().indexOf(value.toLowerCase()) > -1
-          );
+      : films.filter(
+          (film) => film[field].toLowerCase().indexOf(value.toLowerCase()) > -1
+        );
 
     if (searchedFilms.length) {
       res.status(200).send({
         data: searchedFilms,
-        message: "test",
+        message: "",
         status: "ok"
       });
     } else {
