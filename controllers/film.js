@@ -75,18 +75,21 @@ const getAll = async (req, res) => {
   }
 };
 
-const getAllByQuery = async (req, res) => {
+const getByQuery = async (req, res) => {
   try {
-    const field = req.body.field;
-    const value = req.body.value.toLowerCase();
-    //const films = await Film.getAllByQuery({ field, value });
-    const films = (await Film.getAll()).filter(
-      (film) => film[field].toLowerCase().indexOf(value) > -1
-    );
+    const { field, value } = req.body;
 
-    if (films.length) {
+    const films = await Film.getAll();
+
+    const filteredFilms = _.isEmpty(req.query)
+      ? films
+      : films.filter(
+          (film) => film[field].toLowerCase().indexOf(value.toLowerCase()) > -1
+        );
+
+    if (filteredFilms.length) {
       res.status(200).send({
-        data: films,
+        data: filteredFilms,
         message: "test",
         status: "ok"
       });
@@ -162,11 +165,48 @@ const remove = async (req, res) => {
   }
 };
 
+const search = async (req, res) => {
+  try {
+    const { field, value } = req.body;
+    //const films = await Film.getAllByQuery({ field, value });
+    console.log(field, value);
+    const films = await Film.getAll();
+    const searchedFilms = _.isEmpty(req.body)
+      ? films
+      : films
+          .map((film) => film[field])
+          .filter(
+            (film) => film.toLowerCase().indexOf(value.toLowerCase()) > -1
+          );
+
+    if (searchedFilms.length) {
+      res.status(200).send({
+        data: searchedFilms,
+        message: "test",
+        status: "ok"
+      });
+    } else {
+      res.status(404).send({
+        data: {},
+        message: "Films not found",
+        status: "Not found"
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      data: {},
+      message: error.message,
+      status: "Error"
+    });
+  }
+};
+
 export default {
   add,
   getOne,
   getAll,
-  getAllByQuery,
+  getByQuery,
   update,
-  remove
+  remove,
+  search
 };
