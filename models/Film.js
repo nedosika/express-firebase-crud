@@ -18,7 +18,27 @@ class Film {
 
   static create = (film) => firestore.add(COLLECTIONS.films, film);
 
-  static getAll = () => firestore.getDocAll(COLLECTIONS.films);
+  static getAll = async (query) => {
+    const films = await firestore.getDocAll(COLLECTIONS.films);
+
+    const { field = "name", value = "", page = 1, limit = 5 } = query;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = films
+      .filter(
+        (film) => film[field].toLowerCase().indexOf(value.toLowerCase()) > -1
+      )
+      .slice(startIndex, endIndex);
+
+    return {
+      films: results,
+      page,
+      limit,
+      size: films.length
+    };
+  };
 
   static getAllByQuery = (query) =>
     firestore.getDocsByQuery(COLLECTIONS.films, {

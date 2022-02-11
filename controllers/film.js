@@ -51,19 +51,18 @@ const getOne = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const { field = "name", value = "" } = req.query;
-    const films = await Film.getAll();
+    const query = req.query;
 
-    const searchedFilms = _.isEmpty(req.query)
-      ? films
-      : films.filter(
-          (film) => film[field].toLowerCase().indexOf(value.toLowerCase()) > -1
-        );
+    const { films, size, page, limit } = await Film.getAll(query);
 
     if (films.length) {
       res.status(200).send({
-        data: searchedFilms,
-        message: "",
+        data: films,
+        size,
+        count: films.length,
+        page,
+        limit,
+        message: "test",
         status: "ok"
       });
     } else {
