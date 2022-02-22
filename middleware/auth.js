@@ -9,13 +9,19 @@ const verifyToken = (req, res, next) => {
     req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return res.status(403).send("A token is required for authentication");
+    return res.status(403).json({
+      message: "Token is empty",
+      status: "Invalid"
+    });
   }
   try {
     const decoded = jwt.verify(token, config.jwtTokenKey);
     req.user = decoded;
   } catch (err) {
-    return res.status(401).send("Invalid Token");
+    return res.status(401).json({
+      message: "Invalid Token",
+      status: "Invalid"
+    });
   }
   return next();
 };

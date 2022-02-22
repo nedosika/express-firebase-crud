@@ -21,7 +21,7 @@ class Film {
   static getAll = async (query) => {
     const films = await firestore.getDocAll(COLLECTIONS.films);
 
-    const { field = "name", value = "", page = 1, limit = 5 } = query;
+    const { field = "name", value = "", page = 1, limit = 100 } = query;
 
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;

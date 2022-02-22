@@ -10,7 +10,7 @@ const signIn = async (req, res) => {
     const { email, password } = req.body;
 
     if (!(email && password)) {
-      return res.status(400).send({
+      return res.status(400).json({
         message: "All input is required",
         status: "Required"
       });
@@ -19,11 +19,13 @@ const signIn = async (req, res) => {
     const user = await User.getOneByEmail(email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user.id, email }, config.jwtTokenKey, {
-        expiresIn: "2h"
+      const token = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
+        expiresIn: "20s"
       });
 
-      return res.status(200).send({
+      await User.update({ ...user, token });
+
+      return res.status(200).json({
         data: {
           token,
           user
@@ -32,7 +34,7 @@ const signIn = async (req, res) => {
       });
     }
 
-    res.status(400).send({
+    res.status(400).json({
       message: "Invalid Credentials",
       status: "Invalid"
     });
@@ -52,9 +54,9 @@ const signUp = async (req, res) => {
       });
     }
 
-    const oldUser = await User.getOneByEmail(email);
+    const candidate = await User.getOneByEmail(email);
 
-    if (oldUser) {
+    if (candidate) {
       return res.status(409).send({
         message: "User Already Exist. Please Login",
         status: "Exist"
@@ -68,9 +70,11 @@ const signUp = async (req, res) => {
       password: encryptedPassword
     });
 
-    const token = jwt.sign({ user_id: user.id, email }, config.jwtTokenKey, {
-      expiresIn: "2h"
+    const token = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
+      expiresIn: "20s"
     });
+
+    await User.update({ ...user, token });
 
     res.status(201).send({
       data: {
@@ -84,7 +88,50 @@ const signUp = async (req, res) => {
   }
 };
 
+const refresh = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({
+        message: "Invalid Credentials",
+        status: "Invalid"
+      });
+    }
+    const dataFromToken = jwt.verify(token, config.jwtTokenKey);
+
+    const user = await User.findByToken(token);
+
+    if (!dataFromToken || !user) {
+      return res.status(400).json({
+        message: "Invalid Credentials",
+        status: "Invalid"
+      });
+    }
+
+    const newToken = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
+      expiresIn: "20s"
+    });
+
+    await User.update({ ...user, token: newToken });
+
+    return res.status(200).json({
+      data: {
+        token: newToken,
+        user
+      },
+      status: "OK"
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: "Invalid Credentials",
+      status: "Invalid"
+    });
+    console.log(err.message);
+  }
+};
+
 export default {
+  refresh,
   signIn,
   signUp
 };

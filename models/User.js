@@ -24,13 +24,19 @@ class User {
     return await Firestore.getDocOne(COLLECTIONS.users, id);
   }
 
+  static async findByToken(token) {
+    const result = await Firestore.getDocsByQuery(COLLECTIONS.users, {
+      field: "token",
+      rule: "==",
+      value: token
+    });
+
+    return result[0];
+  }
+
   static async create({ email, password }) {
     return await Firestore.add(COLLECTIONS.users, { email, password });
   }
-
-  // static async update(user) {
-  //   return await Firestore.update(COLLECTIONS.users, user);
-  // }
 
   static async update(updatedUser) {
     const oldUser = await User.getOne(updatedUser.id);
@@ -46,12 +52,6 @@ class User {
 
   static async addFilmToFavorites(userId, film) {
     const oldUser = await User.getOne(userId);
-
-    // const favorites = [
-    //   ...(oldUser.favorites ? [...oldUser.favorites] : []),
-    //   film
-    // ];
-
     const oldFavorites = oldUser.favorites || [];
     const favorites = [
       ...oldFavorites.filter(({ id }) => id !== film.id),
