@@ -90,27 +90,13 @@ const signUp = async (req, res) => {
 
 const refresh = async (req, res) => {
   try {
-    const { token } = req.body;
-    if (!token) {
-      return res.status(400).json({
-        message: "Invalid Credentials",
-        status: "Invalid"
-      });
-    }
-    const dataFromToken = jwt.verify(token, config.jwtTokenKey);
+    const { user_id } = req.user;
 
-    const user = await User.findByToken(token);
-
-    if (!dataFromToken || !user) {
-      return res.status(400).json({
-        message: "Invalid Credentials",
-        status: "Invalid"
-      });
-    }
-
-    const newToken = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
+    const newToken = jwt.sign({ user_id }, config.jwtTokenKey, {
       expiresIn: "20s"
     });
+
+    const user = await User.getOne(user_id);
 
     await User.update({ ...user, token: newToken });
 
