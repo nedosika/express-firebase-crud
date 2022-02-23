@@ -20,7 +20,7 @@ const signIn = async (req, res) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
-        expiresIn: "20s"
+        expiresIn: "1d"
       });
 
       await User.update({ ...user, token });
@@ -71,7 +71,7 @@ const signUp = async (req, res) => {
     });
 
     const token = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
-      expiresIn: "20s"
+      expiresIn: "1d"
     });
 
     await User.update({ ...user, token });
@@ -92,17 +92,17 @@ const refresh = async (req, res) => {
   try {
     const { user_id } = req.user;
 
-    const newToken = jwt.sign({ user_id }, config.jwtTokenKey, {
-      expiresIn: "20s"
+    const token = jwt.sign({ user_id }, config.jwtTokenKey, {
+      expiresIn: "1d"
     });
 
     const user = await User.getOne(user_id);
 
-    await User.update({ ...user, token: newToken });
+    await User.update({ ...user, token });
 
     return res.status(200).json({
       data: {
-        token: newToken,
+        token,
         user
       },
       status: "OK"
