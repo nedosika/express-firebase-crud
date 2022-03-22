@@ -5,7 +5,6 @@ import Film from "../models/Film.js";
 const add = async (req, res) => {
   try {
     const data = req.body;
-    console.log(data);
     const film = await Film.create(data);
 
     res.status(201).send({
@@ -139,13 +138,12 @@ const remove = async (req, res) => {
 
 const search = async (req, res) => {
   try {
-    const { field, value } = req.body;
-    //const films = await Film.getAllByQuery({ field, value });
+    const { search } = req.body;
     const films = await Film.getAll();
-    const searchedFilms = _.isEmpty(req.body)
+    const searchedFilms = isEmpty(req.body)
       ? films
       : films.filter(
-          (film) => film[field].toLowerCase().indexOf(value.toLowerCase()) > -1
+          (film) => film[search.field].toLowerCase().indexOf(search.value.toLowerCase()) > -1
         );
 
     if (searchedFilms.length) {
