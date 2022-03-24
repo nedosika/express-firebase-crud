@@ -90,19 +90,28 @@ const signUp = async (req, res) => {
 
 const refresh = async (req, res) => {
   try {
-    const { user_id } = req.user;
+    const {token} = req.body;
 
-    const token = jwt.sign({ user_id }, config.jwtTokenKey, {
+    if(!token){
+      throw new Error('Token must be available')
+    }
+
+    const isVerified = jwt.verify(token, config.jwtTokenKey);
+    const user = await User.findByToken(token);
+
+    if(!isVerified || !user){
+      throw new Error('Token validation error')
+    }
+
+    const newToken = jwt.sign({user_id: user.id}, config.jwtTokenKey, {
       expiresIn: "1d"
     });
 
-    const user = await User.getOne(user_id);
-
-    await User.update({ ...user, token });
+    await User.update({ ...user, token: newToken });
 
     return res.status(200).json({
       data: {
-        token,
+        token: newToken,
         user
       },
       status: "OK"
@@ -116,8 +125,34 @@ const refresh = async (req, res) => {
   }
 };
 
+const logOut = async (req, res) => {
+  try {
+    const {id} = req.body;
+
+    const user = await User.getOne(id);
+
+    const updatedUser = {...user};
+
+    delete updatedUser.token;
+
+    await User.update(updatedUser);
+
+    return res.status(200).json({
+      data: {
+        id
+      },
+      message: "logOuted",
+      status: "OK"
+    });
+
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
 export default {
   refresh,
   signIn,
-  signUp
+  signUp,
+  logOut
 };

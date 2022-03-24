@@ -54,7 +54,6 @@ const remove = async (req, res) => {
       message: "Film deleted from favorites",
       status: "Deleted"
     });
-    console.log(userId);
   } catch (error) {
     res.status(500).send({
       message: error.message,
