@@ -19,10 +19,24 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    credentials: true,
-    origin: ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app', 'https://www.express-firebase-crud-bca52.web.app', 'http://127.0.0.1:3000']
-}));
+// app.use(cors({
+//     credentials: true,
+//     origin: ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app']
+// }));
+
+const allowedOrigins = ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app'];
+app.use(function(req, res, next) {
+    let origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.header("Access-Control-Allow-Origin", origin); // restrict it to the required domain
+    }
+
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+});
 
 app.use("/api", films.router);
 app.use("/api", auth.router);
