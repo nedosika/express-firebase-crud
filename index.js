@@ -21,20 +21,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app']
+    origin: 'https://express-firebase-crud-bca52.web.app'
 }));
 
-const allowedOrigins = ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app'];
 app.use(function(req, res, next) {
-    let origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header("Access-Control-Allow-Origin", origin); // restrict it to the required domain
-    }
-
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-    );
+    res.header("Access-Control-Allow-Origin", 'https://express-firebase-crud-bca52.web.app'); // restrict it to the required domain
     next();
 });
 
