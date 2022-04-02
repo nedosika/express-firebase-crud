@@ -19,11 +19,10 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors({
-//     credentials: true,
-//     origin: 'https://express-firebase-crud-bca52.web.app'
-// }
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app', 'https://www.express-firebase-crud-bca52.web.app', 'http://127.0.0.1:3000']
+}));
 
 app.use("/api", films.router);
 app.use("/api", auth.router);
