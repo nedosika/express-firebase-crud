@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app"]
+const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app", "https://express-firebase-crud-bca52.firebaseapp.com"]
 const corsOptions = {
     preflightContinue:false,
     origin: function (origin, callback) {
