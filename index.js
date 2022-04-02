@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     credentials: true,
-    origin: 'https://express-firebase-crud-bca52.web.app:443'
+    origin: 'https://express-firebase-crud-bca52.web.app'
 }));
 
 app.use("/api", films.router);
