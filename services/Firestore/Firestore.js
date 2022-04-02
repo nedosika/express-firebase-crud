@@ -40,10 +40,6 @@ const getDocsByQuery = async (collection, query) => {
     .where(query.field, query.rule, query.value)
     .get();
 
-  if (snapshot.empty) {
-    return [];
-  }
-
   const docs = [];
 
   snapshot.forEach((doc) => {

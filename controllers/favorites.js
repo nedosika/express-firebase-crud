@@ -1,10 +1,11 @@
-import User from "../models/User.js";
+import UserService from "../services/UserService.js";
+import FavoriteService from "../services/FavoriteService.js";
 
 const get = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const { favorites = [] } = await User.getOne(id);
+    const { favorites = [] } = await UserService.getOne(id);
 
     if (favorites.length) {
       res.status(200).send({
@@ -31,7 +32,7 @@ const add = async (req, res) => {
   try {
     const userId = req.params.id;
     const data = req.body;
-    const favorites = await User.addFilmToFavorites(userId, data);
+    const favorites = await FavoriteService.add(userId, data);
     res.status(201).send(favorites);
   } catch (error) {
     console.log(error.mesaage);
@@ -47,7 +48,7 @@ const remove = async (req, res) => {
     const userId = req.params.id;
     const { filmId } = req.body;
 
-    await User.removeFilmFromFavorites(userId, filmId);
+    await FavoriteService.remove(userId, filmId);
 
     res.status(200).send({
       data: filmId,

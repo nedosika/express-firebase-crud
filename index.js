@@ -1,5 +1,9 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from 'cookie-parser';
+import bodyParser from "body-parser";
+import session from "express-session";
+import {createProxyMiddleware} from "http-proxy-middleware"
 
 import config from "./config.js";
 
@@ -13,8 +17,12 @@ import favorites from "./routes/favorites.js";
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+}));
 
 app.use("/api", films.router);
 app.use("/api", auth.router);

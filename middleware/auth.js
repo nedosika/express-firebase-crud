@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import config from "../config.js";
+import config, {TOKEN_TYPES} from "../config.js";
 
 const verifyToken = (req, res, next) => {
   const token =
@@ -15,7 +15,7 @@ const verifyToken = (req, res, next) => {
     });
   }
   try {
-    const decoded = jwt.verify(token, config.jwtTokenKey);
+    const decoded = jwt.verify(token, config[TOKEN_TYPES.access]);
     req.user = decoded;
   } catch (err) {
     return res.status(401).json({

@@ -2,12 +2,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { PORT, HOST, HOST_URL, JWT_TOKEN_KEY, SESSION_KEY } = process.env;
+export const TOKEN_TYPES = {
+  access: 'jwtTokenAccessKey',
+  refresh: 'jwtTokenRefreshKey'
+}
+
+const { PORT, HOST, HOST_URL, JWT_ACCESS_KEY, JWT_REFRESH_KEY } = process.env;
 
 export default {
   port: PORT,
-  jwtTokenKey: JWT_TOKEN_KEY,
+  [TOKEN_TYPES.access]: JWT_ACCESS_KEY,
+  [TOKEN_TYPES.refresh]: JWT_REFRESH_KEY,
   host: HOST,
-  url: HOST_URL,
-  sessionKey: SESSION_KEY
+  url: HOST_URL
 };

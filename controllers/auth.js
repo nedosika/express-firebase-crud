@@ -1,158 +1,117 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-
-import User from "../models/User.js";
-
-import config from "../config.js";
+import AuthService from "../services/AuthService.js";
 
 const signIn = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const {email, password} = req.body;
 
-    if (!(email && password)) {
-      return res.status(400).json({
-        message: "All input is required",
-        status: "Required"
-      });
+        if (!(email && password)) {
+            return res.status(400).json({
+                message: "All input is required",
+                status: "Required"
+            });
+        }
+
+        const {user, tokens} = await AuthService.signIn(email, password);
+
+        if (user) {
+            return res
+                .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+                .status(200)
+                .send({
+                    data: {
+                        token: tokens.accessToken,
+                        user
+                    },
+                    status: "OK"
+                });
+        }
+
+        res.status(400).json({
+            message: "Invalid Credentials",
+            status: "Invalid"
+        });
+    } catch (error) {
+        console.log(error.message);
     }
-
-    const user = await User.getOneByEmail(email);
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
-        expiresIn: "1d"
-      });
-
-      await User.update({ ...user, token });
-
-      return res.status(200).json({
-        data: {
-          token,
-          user
-        },
-        status: "OK"
-      });
-    }
-
-    res.status(400).json({
-      message: "Invalid Credentials",
-      status: "Invalid"
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
 };
 
 const signUp = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const {email, password} = req.body;
 
-    if (!(email && password)) {
-      return res.status(400).send({
-        message: "All input is required",
-        status: "Required"
-      });
+        if (!(email && password)) {
+            return res.status(400).send({
+                message: "All input is required",
+                status: "Required"
+            });
+        }
+
+        const {user, tokens} = await AuthService.signUp(email, password);
+
+        return res
+            .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            .status(201)
+            .send({
+                data: {
+                    token: tokens.accessToken,
+                    user
+                },
+                status: "OK"
+            });
+    } catch (err) {
+        return res.status(409).send({
+            message: err.message,
+            status: "Error"
+        });
     }
-
-    const candidate = await User.getOneByEmail(email);
-
-    if (candidate) {
-      return res.status(409).send({
-        message: "User Already Exist. Please Login",
-        status: "Exist"
-      });
-    }
-
-    const encryptedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      email: email.toLowerCase(),
-      password: encryptedPassword
-    });
-
-    const token = jwt.sign({ user_id: user.id }, config.jwtTokenKey, {
-      expiresIn: "1d"
-    });
-
-    await User.update({ ...user, token });
-
-    res.status(201).send({
-      data: {
-        token,
-        user
-      },
-      status: "OK"
-    });
-  } catch (err) {
-    console.log(err);
-  }
 };
 
 const refresh = async (req, res) => {
-  try {
-    const {token} = req.body;
+    try {
+        const {refreshToken} = req.cookies;
 
-    if(!token){
-      throw new Error('Token must be available')
+        const {user, tokens} = await AuthService.refresh(refreshToken);
+
+        return res
+            .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            .status(200)
+            .json({
+                data: {
+                    token: tokens.accessToken,
+                    user
+                },
+                status: "OK"
+            });
+    } catch (err) {
+        res.status(400).json({
+            message: "Invalid Credentials",
+            status: "Invalid"
+        });
     }
-
-    const isVerified = jwt.verify(token, config.jwtTokenKey);
-    const user = await User.findByToken(token);
-
-    if(!isVerified || !user){
-      throw new Error('Token validation error')
-    }
-
-    const newToken = jwt.sign({user_id: user.id}, config.jwtTokenKey, {
-      expiresIn: "1d"
-    });
-
-    await User.update({ ...user, token: newToken });
-
-    return res.status(200).json({
-      data: {
-        token: newToken,
-        user
-      },
-      status: "OK"
-    });
-  } catch (err) {
-    res.status(400).json({
-      message: "Invalid Credentials",
-      status: "Invalid"
-    });
-    console.log(err.message);
-  }
 };
 
 const logOut = async (req, res) => {
-  try {
-    const {id} = req.body;
+    try {
+        const {id} = req.body;
 
-    const user = await User.getOne(id);
+        await AuthService.logOut(id);
 
-    const updatedUser = {...user};
+        return res.status(200).json({
+            data: {
+                id
+            },
+            message: "logOuted",
+            status: "OK"
+        });
 
-    delete updatedUser.token;
-
-    await User.update(updatedUser);
-
-    return res.status(200).json({
-      data: {
-        id
-      },
-      message: "logOuted",
-      status: "OK"
-    });
-
-  } catch (error) {
-    console.log(error.message)
-  }
+    } catch (error) {
+        console.log(error.message)
+    }
 }
 
 export default {
-  refresh,
-  signIn,
-  signUp,
-  logOut
+    refresh,
+    signIn,
+    signUp,
+    logOut
 };

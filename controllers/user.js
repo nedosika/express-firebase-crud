@@ -1,13 +1,12 @@
 import _ from "lodash";
-
-import User from "../models/User.js";
+import UserService from "../services/UserService.js";
 
 const update = async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
 
-    const film = await User.update({ id, ...data });
+    const film = await UserService.update({ id, ...data });
 
     if (_.isEmpty(film)) {
       res.status(404).send({
@@ -35,7 +34,7 @@ const getOne = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const user = await User.getOne(id);
+    const user = await UserService.getOne(id);
 
     if (_.isEmpty(user)) {
       res.status(404).send({
