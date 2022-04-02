@@ -19,18 +19,11 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors({
-//     credentials: true,
-//     origin: 'https://express-firebase-crud-bca52.web.app'
-// }));
+app.use(cors({
+    credentials: true,
+    origin: true
+}));
 
-app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'https://express-firebase-crud-bca52.web.app');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', true); // you probably dont want this one unless there is auth/cookies involved
-    res.setHeader('Access-Control-Allow-Methods', 'GET,PATCH,POST,PUT,DELETE');// restrict it to the required domain
-    next();
-});
 
 app.use("/api", films.router);
 app.use("/api", auth.router);
