@@ -22,6 +22,7 @@ app.use(cookieParser());
 
 const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app"]
 const corsOptions = {
+    preflightContinue:false,
     origin: function (origin, callback) {
         if (!origin || whitelist.indexOf(origin) !== -1) {
             callback(null, true)
