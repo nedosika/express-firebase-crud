@@ -19,10 +19,10 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors({
-//     credentials: true,
-//     origin: ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app']
-// }));
+app.use(cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app']
+}));
 
 const allowedOrigins = ['http://localhost:3000', 'https://express-firebase-crud-bca52.web.app'];
 app.use(function(req, res, next) {
