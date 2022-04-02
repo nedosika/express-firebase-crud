@@ -24,6 +24,7 @@ const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52
 const corsOptions = {
     preflightContinue:false,
     origin: function (origin, callback) {
+        console.log(origin)
         if (!origin || whitelist.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
