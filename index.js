@@ -15,19 +15,20 @@ import favorites from "./routes/favorites.js";
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser());
-const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app", "https://films.nedosika.pp.ua"]
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || whitelist.indexOf(origin) !== -1) {
-            callback(null, true)
-        } else {
-            callback(new Error("Not allowed by CORS"))
-        }
-    },
-    credentials: true,
-}
-app.use(cors(corsOptions));
+// app.use(cookieParser());
+// const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app", "https://films.nedosika.pp.ua"]
+// const corsOptions = {
+//     origin: function (origin, callback) {
+//         if (!origin || whitelist.indexOf(origin) !== -1) {
+//             callback(null, true)
+//         } else {
+//             callback(new Error("Not allowed by CORS"))
+//         }
+//     },
+//     credentials: true,
+// }
+// app.use(cors(corsOptions));
+app.use(cors());
 
 
 app.use("/api", films.router);
