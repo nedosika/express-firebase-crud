@@ -69,6 +69,7 @@ const signUp = async (req, res) => {
 const refresh = async (req, res) => {
     try {
         const {refreshToken} = req.cookies;
+        console.log('refresh', refreshToken)
 
         const {user, tokens} = await AuthService.refresh(refreshToken);
 
