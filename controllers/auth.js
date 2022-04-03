@@ -17,7 +17,7 @@ const signIn = async (req, res) => {
 
         if (user) {
             return res
-                .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+                //.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
                 .status(200)
                 .send({
                     data: {
@@ -51,7 +51,7 @@ const signUp = async (req, res) => {
         const {user, tokens} = await AuthService.signUp(email, password);
 
         return res
-            .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            //.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             .status(201)
             .send({
                 data: {
@@ -76,7 +76,7 @@ const refresh = async (req, res) => {
         const {user, tokens} = await AuthService.refresh(refreshToken);
 
         return res
-            .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            //.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             .status(200)
             .json({
                 data: {
