@@ -1,9 +1,6 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
-import bodyParser from "body-parser";
-import session from "express-session";
-import {createProxyMiddleware} from "http-proxy-middleware"
 
 import config from "./config.js";
 
