@@ -13,6 +13,8 @@ const signIn = async (req, res) => {
 
         const {user, tokens} = await AuthService.signIn(email, password);
 
+        console.log(user, tokens)
+
         if (user) {
             return res
                 .cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
