@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from 'cookie-parser';
 
 import config from "./config.js";
 
@@ -15,7 +14,6 @@ import favorites from "./routes/favorites.js";
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser());
 
 const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app", "https://express-firebase-crud-bca52.firebaseapp.com"]
 const corsOptions = {
