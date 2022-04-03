@@ -15,7 +15,7 @@ const app = express();
 
 app.use(express.json());
 
-const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app", "https://express-firebase-crud-bca52.firebaseapp.com"]
+const whitelist = ["http://localhost:3000", "https://express-firebase-crud-bca52.web.app:443", "https://express-firebase-crud-bca52.firebaseapp.com:443"]
 const corsOptions = {
     origin: function (origin, callback) {
         console.log(origin)
