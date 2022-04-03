@@ -38,6 +38,7 @@ app.use("/api", user.router);
 app.use("/api", favorites.router);
 app.use("/", root.router);
 
-const port = 8080;
+const port = config.port;
 
-app.listen(port, () => console.log("server started: " + port));
+app.listen(port || 8080, () => console.log("server started: " + port));
+
