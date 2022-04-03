@@ -40,5 +40,5 @@ app.use("/", root.router);
 
 const port = config.port;
 
-app.listen(port || 8080, () => console.log("server started: " + port));
+app.listen(port || 5000, () => console.log("server started: " + port));
 
