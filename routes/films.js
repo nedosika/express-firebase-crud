@@ -1,7 +1,7 @@
 import express from "express";
 
 import auth from "../middleware/auth.js";
-import filmController from "../controllers/film.js";
+import filmController from "../controllers/films.js";
 
 const router = express.Router();
 

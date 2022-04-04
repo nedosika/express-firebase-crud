@@ -1,6 +1,8 @@
 import _ from "lodash";
 
 import Film from "../models/Film.js";
+import FilmService from "../services/FilmService.js";
+import UserService from "../services/UserService.js";
 
 const add = async (req, res) => {
     try {
@@ -52,7 +54,7 @@ const getAll = async (req, res) => {
     try {
         const query = req.query;
 
-        const {films, size, page, limit} = await Film.getAll(query);
+        const {films, size, page, limit} = await FilmService.getAll(query);
 
         if (films.length) {
             res
@@ -62,7 +64,6 @@ const getAll = async (req, res) => {
                 count: films.length,
                 page,
                 limit,
-                message: "test",
                 status: "ok"
             });
         } else {
@@ -73,6 +74,7 @@ const getAll = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log(error)
         res.status(500).send({
             data: {},
             message: error.message,

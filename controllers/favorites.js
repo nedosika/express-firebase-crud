@@ -1,11 +1,11 @@
-import UserService from "../services/UserService.js";
 import FavoriteService from "../services/FavoriteService.js";
+import UserService from "../services/UserService.js";
 
 const get = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const { favorites = [] } = await UserService.getOne(id);
+    const favorites = await UserService.getFavorites(id);
 
     if (favorites.length) {
       res.status(200).send({

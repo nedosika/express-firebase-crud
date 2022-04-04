@@ -26,6 +26,6 @@ const remove = async (userId, filmId) => {
 }
 
 export default {
-    add,
+        add,
     remove
 }

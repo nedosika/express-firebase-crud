@@ -11,9 +11,14 @@ const signIn = async (email, password) => {
     if (user && (await bcrypt.compare(password, user.password))) {
         const tokens = TokenService.generateTokens(user);
 
-        await UserService.update({...user, token: tokens.refreshToken});
+        const {id, favorites, email} = await UserService.update({...user, refreshToken: tokens.refreshToken});
 
-        return {user, tokens}
+        return {
+            user: {
+                id, email, favorites
+            },
+            tokens
+        }
     }
 }
 
@@ -34,7 +39,7 @@ const signUp = async (email, password) => {
 
     const tokens = TokenService.generateTokens(user);
 
-    await UserService.update({...user, token: tokens.refreshToken});
+    await UserService.update({...user, refreshToken: tokens.refreshToken});
 
     return {user, tokens}
 }
@@ -44,13 +49,13 @@ const logOut = async (id) => {
 
     const updatedUser = {...user};
 
-    delete updatedUser.token;
+    delete updatedUser.refreshToken;
 
     return await UserService.update(updatedUser);
 }
 
 const refresh = async (token) => {
-    if(!token){
+    if (!token) {
         throw new Error("Token not found")
     }
 
@@ -63,7 +68,7 @@ const refresh = async (token) => {
 
     const tokens = TokenService.generateTokens({id: user.id});
 
-    await UserService.update({...user, token: tokens.refreshToken});
+    await UserService.update({...user, refreshToken: tokens.refreshToken});
 
     return {user, tokens}
 }

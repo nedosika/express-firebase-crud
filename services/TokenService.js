@@ -2,8 +2,16 @@ import jwt from "jsonwebtoken";
 import config, {TOKEN_TYPES} from "../config.js";
 
 const generateTokens = (payload) => {
-    const accessToken = jwt.sign({user_id: payload.id}, config[TOKEN_TYPES.access], {expiresIn: '15m'});
-    const refreshToken = jwt.sign({user_id: payload.id}, config[TOKEN_TYPES.refresh], {expiresIn: '30d'});
+    const accessToken = jwt.sign(
+        {user_id: payload.id},
+        config[TOKEN_TYPES.access],
+        {expiresIn: config.accessTokenExpiresIn}
+        );
+    const refreshToken = jwt.sign(
+        {user_id: payload.id},
+        config[TOKEN_TYPES.refresh],
+        {expiresIn: config.refreshTokenExpiresIn}
+        );
 
     return {accessToken, refreshToken}
 }

@@ -13,15 +13,12 @@ const signIn = async (req, res) => {
 
         const {user, tokens} = await AuthService.signIn(email, password);
 
-        console.log(user, tokens)
-
         if (user) {
             return res
-                //.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
                 .status(200)
                 .send({
                     data: {
-                        token: tokens.accessToken,
+                        ...tokens,
                         user
                     },
                     status: "OK"
@@ -51,7 +48,6 @@ const signUp = async (req, res) => {
         const {user, tokens} = await AuthService.signUp(email, password);
 
         return res
-            //.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             .status(201)
             .send({
                 data: {
@@ -70,17 +66,17 @@ const signUp = async (req, res) => {
 
 const refresh = async (req, res) => {
     try {
-        const {refreshToken} = req.cookies;
-        console.log('refresh', refreshToken)
+        const refreshToken =
+            req.body.refreshToken ||
+            req.query.refreshToken
 
         const {user, tokens} = await AuthService.refresh(refreshToken);
 
         return res
-            //.cookie('refreshToken', tokens.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             .status(200)
             .json({
                 data: {
-                    token: tokens.accessToken,
+                    ...tokens,
                     user
                 },
                 status: "OK"
@@ -88,7 +84,7 @@ const refresh = async (req, res) => {
     } catch (err) {
         res.status(400).json({
             message: "Invalid Credentials",
-            status: "Invalid"
+            status: "Invalid Credentials"
         });
     }
 };

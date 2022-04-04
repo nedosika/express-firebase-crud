@@ -6,7 +6,7 @@ const getOne = (id) => Firestore.getDocOne(COLLECTIONS.users, id);
 
 const findByToken = async (token) => {
     const result = await Firestore.getDocsByQuery(COLLECTIONS.users, {
-        field: "token",
+        field: "refreshToken",
         rule: "==",
         value: token
     });
@@ -36,9 +36,15 @@ const update = async (updatedUser) => {
     return newUser;
 }
 
+const getFavorites = async (id) => {
+    const user = id ? await getOne(id) : null;
+    return user ? user.favorites : [];
+}
+
 export default {
     findByToken,
     getOneByEmail,
     getOne,
-    update
+    update,
+    getFavorites
 }
