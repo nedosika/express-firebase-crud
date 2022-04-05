@@ -68,7 +68,8 @@ const refresh = async (req, res) => {
     try {
         const refreshToken =
             req.body.refreshToken ||
-            req.query.refreshToken
+            req.query.refreshToken ||
+            req.headers["x-auth-refresh-token"];
 
         const {user, tokens} = await AuthService.refresh(refreshToken);
 
@@ -82,6 +83,7 @@ const refresh = async (req, res) => {
                 status: "OK"
             });
     } catch (err) {
+        console.log(err.message)
         res.status(400).json({
             message: "Invalid Credentials",
             status: "Invalid Credentials"
