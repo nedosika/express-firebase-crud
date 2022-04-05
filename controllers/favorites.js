@@ -1,4 +1,3 @@
-import FavoriteService from "../services/FavoriteService.js";
 import UserService from "../services/UserService.js";
 
 const get = async (req, res) => {
@@ -32,7 +31,7 @@ const add = async (req, res) => {
   try {
     const userId = req.params.id;
     const data = req.body;
-    const favorites = await FavoriteService.add(userId, data);
+    const favorites = await UserService.addFavorite(userId, data);
     res.status(201).send(favorites);
   } catch (error) {
     console.log(error.mesaage);
@@ -48,7 +47,7 @@ const remove = async (req, res) => {
     const userId = req.params.id;
     const { filmId } = req.body;
 
-    await FavoriteService.remove(userId, filmId);
+    await UserService.removeFavorite(userId, filmId);
 
     res.status(200).send({
       data: filmId,

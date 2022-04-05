@@ -4,14 +4,14 @@ import _ from "lodash";
 
 const getOne = (id) => Firestore.getDocOne(COLLECTIONS.users, id);
 
-const findByToken = async (token) => {
+const getOneByToken = async (token) => {
     const result = await Firestore.getDocsByQuery(COLLECTIONS.users, {
         field: "refreshToken",
         rule: "==",
         value: token
     });
 
-    return result[0];
+    return result.length ? result[0] : null;
 }
 
 const getOneByEmail = async (email) => {
@@ -38,13 +38,38 @@ const update = async (updatedUser) => {
 
 const getFavorites = async (id) => {
     const user = id ? await getOne(id) : null;
-    return user ? user.favorites : [];
+    return user?.favorites ? user.favorites : [];
+}
+
+const addFavorite = async (userId, film) => {
+    const oldUser = await getOne(userId);
+    const oldFavorites = oldUser.favorites || [];
+    const favorites = [
+        ...oldFavorites.filter(({ id }) => id !== film.id),
+        film
+    ];
+
+    await Firestore.update(COLLECTIONS.users, { ...oldUser, favorites });
+
+    return favorites;
+}
+
+const removeFavorite = async (userId, filmId) => {
+    const oldUser = await getOne(userId);
+
+    const favorites = oldUser.favorites.filter((film) => film.id !== filmId);
+
+    await Firestore.update(COLLECTIONS.users, { ...oldUser, favorites });
+
+    return favorites;
 }
 
 export default {
-    findByToken,
+    getOneByToken,
     getOneByEmail,
     getOne,
     update,
-    getFavorites
+    getFavorites,
+    addFavorite,
+    removeFavorite
 }

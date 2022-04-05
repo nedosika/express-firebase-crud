@@ -1,13 +1,11 @@
 import _ from "lodash";
 
-import Film from "../models/Film.js";
 import FilmService from "../services/FilmService.js";
-import UserService from "../services/UserService.js";
 
 const add = async (req, res) => {
     try {
         const data = req.body;
-        const film = await Film.create(data);
+        const film = await FilmService.create(data);
 
         res.status(201).send({
             data: film,
@@ -27,7 +25,7 @@ const getOne = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const film = await Film.getOne(id);
+        const film = await FilmService.getOne(id);
 
         if (_.isEmpty(film)) {
             res.status(404).send({
@@ -88,7 +86,7 @@ const update = async (req, res) => {
         const id = req.params.id;
         const data = req.body;
 
-        const film = await Film.update({id, ...data});
+        const film = await FilmService.update({id, ...data});
 
         if (_.isEmpty(film)) {
             res.status(404).send({
@@ -115,7 +113,7 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
     try {
         const id = req.params.id;
-        const film = await Film.remove(id);
+        const film = await FilmService.remove(id);
 
         if (_.isEmpty(film)) {
             res.status(404).send({
@@ -142,7 +140,7 @@ const remove = async (req, res) => {
 const search = async (req, res) => {
     try {
         const {search} = req.body;
-        const films = await Film.getAll();
+        const films = await FilmService.getAll();
         const searchedFilms = isEmpty(req.body)
             ? films
             : films.filter(

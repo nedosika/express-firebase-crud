@@ -60,7 +60,7 @@ const refresh = async (token) => {
     }
 
     const isVerified = TokenService.validateToken({token, type: TOKEN_TYPES.refresh});
-    const user = await UserService.findByToken(token);
+    const user = await UserService.getOneByToken(token);
 
     if (!isVerified || !user) {
         throw new Error('Token validation error')
