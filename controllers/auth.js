@@ -16,7 +16,7 @@ const signIn = async (req, res) => {
         if (auth?.user) {
             return res
                 .status(200)
-                .send({
+                .json({
                     data: {
                         ...auth.tokens,
                         user: auth.user
@@ -30,7 +30,10 @@ const signIn = async (req, res) => {
             status: "Invalid"
         });
     } catch (error) {
-        console.log(error.message);
+        return res.status(409).json({
+            message: error.message,
+            status: "Error"
+        });
     }
 };
 
@@ -49,7 +52,7 @@ const signUp = async (req, res) => {
 
         return res
             .status(201)
-            .send({
+            .json({
                 data: {
                     token: tokens.accessToken,
                     user
@@ -57,7 +60,7 @@ const signUp = async (req, res) => {
                 status: "OK"
             });
     } catch (err) {
-        return res.status(409).send({
+        return res.status(409).json({
             message: err.message,
             status: "Error"
         });
