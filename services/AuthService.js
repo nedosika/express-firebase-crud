@@ -20,6 +20,7 @@ const signIn = async (email, password) => {
             tokens
         }
     }
+    throw new Error("Error Login")
 }
 
 const signUp = async (email, password) => {

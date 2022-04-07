@@ -11,15 +11,15 @@ const signIn = async (req, res) => {
             });
         }
 
-        const {user, tokens} = await AuthService.signIn(email, password);
+        const auth = await AuthService.signIn(email, password);
 
-        if (user) {
+        if (auth?.user) {
             return res
                 .status(200)
                 .send({
                     data: {
-                        ...tokens,
-                        user
+                        ...auth.tokens,
+                        user: auth.user
                     },
                     status: "OK"
                 });
