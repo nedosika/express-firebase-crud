@@ -22,7 +22,7 @@ const getAll = async (query) => {
     const endIndex = page * limit;
 
     const result = films
-        .filter((film) => film.name.includes(search))
+        .filter((film) => film[field].toLowerCase().indexOf(search.toLowerCase()) > -1)
         .sort((a, b) =>
             order === 'ASC'
                 ? a[field] > b[field] ? 1 : -1
