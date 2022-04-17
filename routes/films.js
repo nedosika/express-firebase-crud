@@ -19,7 +19,7 @@ router.get("/films/:id", filmController.getOne);
 router.put(
     "/films/:id",
     auth,
-    body('name').isLength({min: 5}),
+    body('name').isLength({min: 6}),
     body('img').isLength({min: 5}),
     body("genre").isIn(["Detective","Anime", "BlockBaster", "RomCom", "SciFi", "Horror"]),
     filmController.update

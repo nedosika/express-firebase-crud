@@ -68,8 +68,6 @@ const getAll = async (req, res) => {
 
         const auth = await TokenService.validateToken({token, type: TOKEN_TYPES.access});
 
-        console.log(auth)
-
         const {films, size, page, limit} = await FilmService.getAll({...query, userId: auth?.user_id});
 
         if (films.length) {
