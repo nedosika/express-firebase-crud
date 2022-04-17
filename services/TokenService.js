@@ -18,7 +18,7 @@ const generateTokens = (payload) => {
 
 const validateToken = (payload) => {
     try {
-        return  jwt.verify(payload.token, config[payload.type]);
+        return jwt.verify(payload.token, config[payload.type]);
     } catch (error) {
         return null
     }

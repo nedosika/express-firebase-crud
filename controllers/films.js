@@ -1,13 +1,26 @@
 import _ from "lodash";
+import { validationResult }  from 'express-validator';
 
 import FilmService from "../services/FilmService.js";
+import TokenService from "../services/TokenService.js";
+import {TOKEN_TYPES} from "../config.js";
 
 const add = async (req, res) => {
     try {
         const data = req.body;
         const film = await FilmService.create(data);
 
-        res.status(201).send({
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                data: Object.assign({}, ...errors.array().map((error) => ({[error.param]: error.msg}))),
+                message: "Validation error",
+                status: "Validation error"
+            });
+        }
+
+        return res.status(201).send({
             data: film,
             message: "Film added",
             status: "Added"
@@ -51,8 +64,13 @@ const getOne = async (req, res) => {
 const getAll = async (req, res) => {
     try {
         const query = req.query;
+        const token = req.headers.authorization?.split(" ")[1];
 
-        const {films, size, page, limit} = await FilmService.getAll(query);
+        const auth = await TokenService.validateToken({token, type: TOKEN_TYPES.access});
+
+        console.log(auth)
+
+        const {films, size, page, limit} = await FilmService.getAll({...query, userId: auth?.user_id});
 
         if (films.length) {
             res
@@ -86,16 +104,26 @@ const update = async (req, res) => {
         const id = req.params.id;
         const data = req.body;
 
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                data: Object.assign({}, ...errors.array().map((error) => ({[error.param]: error.msg}))),
+                message: "Validation error",
+                status: "Validation error"
+            });
+        }
+
         const film = await FilmService.update({id, ...data});
 
         if (_.isEmpty(film)) {
-            res.status(404).send({
+            return res.status(404).send({
                 data,
                 message: "Film not found",
                 status: "Not found"
             });
         } else {
-            res.status(200).send({
+            return res.status(200).send({
                 data: film,
                 message: "Film updated",
                 status: "Updated"
