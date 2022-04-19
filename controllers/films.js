@@ -8,7 +8,6 @@ import {TOKEN_TYPES} from "../config.js";
 const add = async (req, res) => {
     try {
         const data = req.body;
-        const film = await FilmService.create(data);
 
         const errors = validationResult(req);
 
@@ -19,6 +18,8 @@ const add = async (req, res) => {
                 status: "Validation error"
             });
         }
+
+        const film = await FilmService.create(data);
 
         return res.status(201).send({
             data: film,
