@@ -5,9 +5,9 @@ import favoritesController from "../controllers/favorites.js";
 
 const router = express.Router();
 
-router.get("/favorites/:id", auth, favoritesController.get);
-router.put("/favorites/:id", auth, favoritesController.add);
-router.delete("/favorites/:id", auth, favoritesController.remove);
+router.get("/favorites", auth, favoritesController.get);
+router.put("/favorites", auth, favoritesController.add);
+router.delete("/favorites", auth, favoritesController.remove);
 
 export default {
   router

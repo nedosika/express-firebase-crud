@@ -2,9 +2,9 @@ import UserService from "../services/UserService.js";
 
 const get = async (req, res) => {
   try {
-    const id = req.params.id;
+    const {user_id} = req.user;
 
-    const favorites = await UserService.getFavorites(id);
+    const favorites = await UserService.getFavorites(user_id);
 
     if (favorites.length) {
       res.status(200).send({
@@ -29,12 +29,12 @@ const get = async (req, res) => {
 
 const add = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const {user_id} = req.user;
     const data = req.body;
-    const favorites = await UserService.addFavorite(userId, data);
+    const favorites = await UserService.addFavorite(user_id, data);
     res.status(201).send(favorites);
   } catch (error) {
-    console.log(error.mesaage);
+    console.log(error.message);
     res.status(500).send({
       message: error.message,
       status: "Error"
@@ -44,10 +44,10 @@ const add = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const {user_id} = req.user;
     const { filmId } = req.body;
 
-    await UserService.removeFavorite(userId, filmId);
+    await UserService.removeFavorite(user_id, filmId);
 
     res.status(200).send({
       data: filmId,
